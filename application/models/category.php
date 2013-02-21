@@ -5,14 +5,10 @@ class Category extends DataMapper {
 	var $has_one = array();
 
 
-	var $has_many = array();
+	var $has_many = array('item');
 
 	var $validation = array(
-		'example' => array(
-			// example is required, and cannot be more than 120 characters long.
-			'rules' => array('required', 'max_length' => 120),
-			'label' => 'Example'
-		)
+
 	);
 
     function __construct($id = NULL)
