@@ -1,5 +1,9 @@
 <?php
 $url_img = "http://bookstore.trajettoria.com";
+//$url_img = "http://localhost/bookstore";
+
+define("DS", ",");
+define("TS", ".");
 ?>
 
 <!DOCTYPE html> 
@@ -7,7 +11,7 @@ $url_img = "http://bookstore.trajettoria.com";
 <head> 
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	
-	<title><?php echo $title; ?></title> 
+	<title><?php echo $page_title; ?></title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
 
@@ -18,8 +22,16 @@ $url_img = "http://bookstore.trajettoria.com";
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	
 	<script>
-	/*
+	
 	$(function(){
+		var w = window.document.width;
+		var widthItem = (w - 80)/3 + "px";
+
+		$('.quadroItem').width(widthItem);
+		$('.quadroImagem').width(((w-80)/6 - 20) + "px");
+		$('.quadroImagem img').width(((w-80)/6 - 20) + "px");
+		
+	/*
 		var menuStatus;
 		var menuWidth = "250px";
 	 
@@ -66,36 +78,41 @@ $url_img = "http://bookstore.trajettoria.com";
 				$(p).addClass('active');
 			}
 		});
-	 
+	*/ 
 	});
-	*/
-	</script>
 	
+	
+	
+	</script>
+	<style>
+	.p-price { font-weight: bold; color: green; }
+	</style>
 </head> 
 <body> 
+
 
 
 <?php
 if($cont_categories > 1) :
 	$cat2 = $categories;
-	foreach($categories as $i => $cat):
-		RenderPage($cat, $i, $title, $url_img, $cat2, $cont_categories);
+	foreach($categories as $i => $cat1):
+		RenderPage($cat1, $i, $page_title, $url_img, $cat2, $cont_categories);
 	endforeach;
 endif;
 
-function RenderPage($cat, $i, $title, $url_img, $categories, $cont_categories){
+function RenderPage($cat1, $i, $page_title, $url_img, $cat2, $cont_categories){
 
 ?>
 
 
-<div data-role="page" id="spash" data-title="Trajettoria BookStore">
+<div data-role="page" id="splash" data-title="<?php echo $page_title; ?>">
 
 	<!-- ======================== HEADER ================================= -->
 	<div data-role="header" data-position="fixed">
 	
 		<a href="#popupCategories-<?php echo $i; ?>" data-rel="popup" data-icon="grid" data-theme="b" data-position-to="origin"/>Categorias</a>
 	
-		<h1><?php echo $title; ?></h1>
+		<h1><?php echo $page_title; ?></h1>
 
 		<a href="#popupLogin-<?php echo $i; ?>" data-rel="popup" data-theme="b" data-position-to="window" data-transition="slideup"/>Login ou Cadastro</a>
 		<div data-role="popup" id="popupLogin-<?php echo $i; ?>" class="ui-content" data-theme="a" data-overlay-theme="a" style="width: 300px;">
@@ -120,30 +137,41 @@ function RenderPage($cat, $i, $title, $url_img, $categories, $cont_categories){
 	
 	<!-- ======================== MAIN AREA  ================================= -->
 
+	<?php
+	$f = new Item();
+	if($cat1->featured != "")
+	{
+		$f->get_by_id($cat1->featured);
+	}
+	else
+	{
+		$f->order_by('id', 'random')->limit(1)->get();
+	}
+
+	?>
 	<div style="width: 100%; background: #eee; border-left: 1px solid #333; position: relative; top: 0; left: 0; z-index: 200" id="mainArea">
 		<!-- MAIN CONTENT -->
 		<div class="ui-grid-c">
 			<div class="ui-block-a" style="width: 25%; padding: 20px;">
-				<img src="<?php echo $url_img; ?>/images/upload/ed5_2.gif" width="100%"/>
+				<img src="<?php echo $url_img; ?>/images/upload/<?php echo $f->image; ?>" width="100%"/>
 			</div>
 			<div class="ui-block-b" style="width: 40%; padding: 0 0 20px 0;">
-				<h2>Emergências Clínicas - Abordagem Prática</h2>
-				<p>Herlon Saraiva Martins, Rodrigo Antonio Brandão Neto, Augusto Scalabrini Neto, Irineu Tadeu Velasco</p>
-				<p>5ª edição, 2010</p>
-				<p>Editora Manole</p>
-				<p>240 páginas</p>
+				<h2><?php echo $f->title; ?></h2>
+				<p><?php echo $f->authors; ?></p>
+				<p><?php echo $f->edition; ?></p>
+				<p>ISBN <?php echo $f->isbn; ?></p>
+				<p><?php echo $f->pages; ?> pág.</p>
 				<a href="#popupInfo" data-inline="true" data-role="button" data-mini="true" data-theme="c" data-icon="plus" data-rel="popup" data-position-to="window" data-transition="slideup"/>Mais informações</a>
 				<div data-role="popup" id="popupInfo" class="ui-content" data-theme="c" data-overlay-theme="a" style="margin-left: 30px; margin-right: 30px;">
 					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Fechar</a>
 					<h3>Mais informações</h3>
-					<p>Montes augue nec! Velit ac dignissim, tincidunt dapibus dolor adipiscing cursus nunc, urna vut platea auctor ridiculus pulvinar elit sit. Placerat, pulvinar risus porta augue, scelerisque. Parturient. Nascetur odio sagittis ridiculus parturient urna tortor ultricies mid porttitor dignissim integer aenean augue, aenean urna a porttitor, pulvinar lacus <br>
-					etiam arcu nunc aenean augue amet parturient? Dictumst sit quis magna magna. Mauris? Sociis urna et diam nec vut. Tristique eros parturient vel magna turpis, tortor augue? Pellentesque magna dolor nec augue dapibus, velit ac risus nunc. Lundium nisi magnis? Elementum tincidunt ultrices! Turpis, phasellus habitasse! </p>
+					<?php echo $f->notes; ?>
 				</div>					
 
 			</div>
 			
 			<div class="ui-block-c" style="width: 35%; padding: 0 20px 20px 20px;">
-				<p style="font-size: 30px; font-weight: bold; text-align: center;"><span style="font-size: 18px">R$ </span>55,80</p>
+				<p style="font-size: 30px; font-weight: bold; text-align: center;"><span style="font-size: 18px">R$ </span><?php echo number_format($f->price, 2, DS, TS); ?></p>
 				<a href="index.html" data-role="button" data-icon="check" data-theme="e">Comprar</a>
 				<a href="index.html" data-role="button" data-theme="c" class="ui-disabled">Ler</a>
 				<h3>Ambiente seguro</h3>
@@ -151,64 +179,31 @@ function RenderPage($cat, $i, $title, $url_img, $categories, $cont_categories){
 		</div>
 		
 		<!-- COMEÇO GALERIA DE LIVROS MENORES -->
-		
-		<?php foreach($cat->item as $item) : ?>
-			<?php echo $item->title . "<br>"; ?>
+		<?php $cat1->item->get(); ?>
+		<?php $c = 1; ?>
+		<?php foreach($cat1->item as $it) : ?>
+			<?php if ($f->id != $it->id) : ?>
+				<div class="quadroItem" style="float: left; margin: 0 0 20px 20px;">
+					<div class="quadroImagem" style="float: left; padding: 0 20px 0 0">
+						<img src="<?php echo $url_img; ?>/images/upload/<?php echo $it->image; ?>" width="10" />
+					</div>
+					<div style="width: 50%; float: left;">
+							<h4 style="margin-top: 0"><?php echo $it->title; ?></h4>
+							<p><?php echo $it->authors; ?></p>
+							<p><?php echo $it->edition; ?></p>
+							<p>ISBN <?php echo $it->isbn; ?></p>
+							<p><?php echo $it->pages; ?> pág.</p>
+							<p class="p-price">R$ <?php echo number_format($it->price, 2, DS, TS); ?></p>
+							<a href="#teste" data-inline="true" data-role="button" data-mini="true" data-theme="c" data-icon="plus">Abrir</a>
+					</div>
+				</div>
+				<?php if ($c%3 == 0) : ?>
+				<div style="clear: both;"></div>
+				<?php endif; ?>
+				<?php $c++; ?>
+			<?php endif; ?>
 		<?php endforeach; ?>
 
-		<div class="ui-grid-b">
-			<div class="ui-block-a" style="width: 33%;">
-			
-				<div class="ui-grid-a">
-					<div class="ui-block-a" style="width: 50%; padding: 0 20px 20px 20px;">
-						<img src="<?php echo $url_img; ?>/images/upload/ed5_2.gif" width="100%"/>
-					</div>
-					<div class="ui-block-b" style="width: 50%; padding: 0 20px 20px 0px;">
-						<h4>Emergências Clínicas - Abordagem Prática</h4>
-						<p>Herlon Saraiva Martins, Rodrigo Antonio Brandão Neto, Augusto Scalabrini Neto, Irineu Tadeu Velasco</p>
-						<p>5ª edição, 2010</p>
-						<p>Editora Manole</p>
-						<p>240 páginas</p>
-						<a href="#teste" data-inline="true" data-role="button" data-mini="true" data-theme="c" data-icon="plus">Abrir</a>
-					</div>
-				</div><!-- /grid-a -->
-
-			</div>
-			<div class="ui-block-b" style="width: 33%;">
-			
-				<div class="ui-grid-a">
-					<div class="ui-block-a" style="width: 50%; padding: 0 20px 20px 20px;">
-						<img src="<?php echo $url_img; ?>/images/upload/ed5_2.gif" width="100%"/>
-					</div>
-					<div class="ui-block-b" style="width: 50%; padding: 0 20px 20px 0px;">
-						<h4>Emergências Clínicas - Abordagem Prática</h4>
-						<p>Herlon Saraiva Martins, Rodrigo Antonio Brandão Neto, Augusto Scalabrini Neto, Irineu Tadeu Velasco</p>
-						<p>5ª edição, 2010</p>
-						<p>Editora Manole</p>
-						<p>240 páginas</p>
-					</div>
-				</div><!-- /grid-a -->
-			
-			</div>
-			<div class="ui-block-c" style="width: 33%;">
-				
-				<div class="ui-grid-a">
-					<div class="ui-block-a" style="width: 50%; padding: 0 20px 20px 20px;">
-						<img src="<?php echo $url_img; ?>/images/upload/ed5_2.gif" width="100%"/>
-					</div>
-					<div class="ui-block-b" style="width: 50%; padding: 0 20px 20px 0px;">
-						<h4>Emergências Clínicas - Abordagem Prática</h4>
-						<p>Herlon Saraiva Martins, Rodrigo Antonio Brandão Neto, Augusto Scalabrini Neto, Irineu Tadeu Velasco</p>
-						<p>5ª edição, 2010</p>
-						<p>Editora Manole</p>
-						<p>240 páginas</p>
-					</div>
-				</div><!-- /grid-a -->
-			
-			</div>
-		</div><!-- /grid-b -->
-		
-		
 	</div>
 	<!-- ======================== END MAIN AREA ================================= -->
 	
@@ -229,19 +224,14 @@ function RenderPage($cat, $i, $title, $url_img, $categories, $cont_categories){
 		<ul data-role="listview" data-inset="true" data-theme="a">
 			<?php 
 			if($cont_categories > 1):
-				foreach($categories as $categ):
+				foreach($cat2 as $categ):
 			?>
-				<li><a href="#"><?php echo $categ->title; ?></a><span class="ui-li-count"><?php echo $categ->item->result_count() ;?></span></li>	
-			
+				<li><a href="#"><?php echo $categ->title; ?></a><span class="ui-li-count"><?php echo $categ->item->count() ;?></span></li>	
+
 				<?php endforeach; ?>
 			<?php else: // 1 category only?>
-				
+			
 			<?php endif; ?>
-			
-			
-		
-			
-
 		</ul>
 	</div>
 	<!-- ======================== END SIDEBAR ================================= -->
